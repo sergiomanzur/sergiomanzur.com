@@ -1,0 +1,11 @@
+.latest {
+    border: solid 1px lightgray;
+}
+
+.latestRow {
+    border-bottom: solid 1px lightgray;
+    border-top: solid 1px lightgray;;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+}

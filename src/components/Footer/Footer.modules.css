@@ -1,0 +1,25 @@
+.Footer {
+    background-color: lightgray;
+    position: absolute;
+    width: 100%;
+}
+
+.Footer li {
+    text-decoration: none;
+    list-style: none;
+}
+
+.Footer li a {
+    color: floralwhite;
+}
+
+.Footer a {
+    color: floralwhite;
+    text-decoration: none;
+}
+
+.Footer h4 {
+    color: azure;
+    font-size: 22px;
+    font-weight: bold;
+}

@@ -1,0 +1,13 @@
+.content{
+    width: 100%;
+}
+
+.content img {
+    max-width: 100%;
+    width: 100%;
+}
+
+.Subtitle {
+    margin-bottom: 15px;
+    color: lightgray;
+}

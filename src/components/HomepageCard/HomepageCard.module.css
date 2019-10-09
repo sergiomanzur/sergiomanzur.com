@@ -1,0 +1,12 @@
+.HomepageCard {
+    margin-bottom: 40px;
+    /*height: 400px;*/
+}
+.Image {
+    width: 100%;
+}
+
+.Subtitle {
+    padding: 15px;
+    color: lightgray;
+}
