@@ -24,7 +24,7 @@ const MostRead = () => {
         x =>
             <Row key={x.id} className={classes.mostReadRow}>
             <Col sm={4}>
-                <Image src={x.main_image} rounded style={{maxWidth: "100%"}} />
+                <a href={x.slug}><Image src={x.main_image} rounded style={{maxWidth: "100%"}} /></a>
             </Col>
             <Col sm={8}>
                 <a href={x.slug}> {x.title}</a>
