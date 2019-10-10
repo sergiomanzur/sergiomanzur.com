@@ -12,8 +12,6 @@ class PaginationComp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {}
-
-        //this.handleNextClick = this.handleNextClick.bind(this);
     }
 
     handleNextClick(event) {
@@ -30,16 +28,16 @@ class PaginationComp extends React.Component {
         this.props.handlePageChange(pageNumber);
     }
 
+
     render() {
 
-        //alert(props.current);
         console.log("currentpage on homepage ", this.props.current);
 
         return (
             <Container style={{display: "flex", flexFlow: "row wrap", justifyContent: "center"}}>
                 <Row>
                     <Col xs={{span: 1}}>
-                        <Pagination size="lg">
+                        <Pagination size="md">
                             <Pagination.First disabled={this.props.current === 1} onClick={() => this.props.handlePageChange(1)}/>
                             <Pagination.Prev disabled={this.props.current === 1} onClick={() => this.handleBackClick()}/>
                             {this.props.current > 1 ? <Pagination.Item onClick={() => this.handlePageNumberClick(this.props.current-1)} key={this.props.current - 1}>{this.props.current - 1}</Pagination.Item> :  ""}
