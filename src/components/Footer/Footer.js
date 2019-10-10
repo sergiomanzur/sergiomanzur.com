@@ -17,26 +17,26 @@ const footer = (props) => {
                 <Col sm={12} >
                     <Container>
                         <Row>
-                            <Col xs={3}>
+                            <Col xs={12} sm={3}>
                                 <h4>Blog de Sergio Manzur</h4>
                                 <br/>
                                 <p style={{color:"floralwhite"}}>Mi nombre es Sergio Manzur, actualmente trabajo como Web Developer para una empresa
                                     privada. Soy un apasionado del futbol y la
                                     tecnología, las Chivas y los videojuegos.</p>
                             </Col>
-                            <Col xs={3}>
+                            <Col xs={12} sm={3}>
                                 <h4>Categorías</h4>
                                 <br/>
                                 {cats}
                             </Col>
-                            <Col xs={3}>
+                            <Col xs={12} sm={3}>
                                 <h4>Enlaces</h4>
                                 <br/>
-                                <li><a href="#">LINK</a></li>
+                                <li><a href="https://www.siteground.com/index.htm?afcode=c5fcf639e810adad47f8ec325f269508">El Mejor Hosting del Mundo</a></li>
                                 <li><a href="#">LINK</a></li>
                                 <li><a href="#">LINK</a></li>
                             </Col>
-                            <Col xs={3}>
+                            <Col xs={12} sm={3}>
                                 <h4>Contacto</h4>
                                 <br/>
                                 <a href="/contacto">Contáctanos</a>
