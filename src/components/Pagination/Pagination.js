@@ -45,7 +45,7 @@ class PaginationComp extends React.Component {
                             {this.props.current !== this.props.totalPages ? <Pagination.Item onClick={() => this.handlePageNumberClick(this.props.current+1)} key={this.props.current + 1}>{this.props.current + 1}</Pagination.Item> :  ""}
                             {this.props.current === 1 ? <Pagination.Item onClick={() => this.handlePageNumberClick(this.props.current+2)} key={this.props.current + 2}>{this.props.current + 2}</Pagination.Item> :  ""}
                             <Pagination.Next disabled={this.props.current === this.props.totalPages} onClick={() => this.handleNextClick()}/>
-                            <Pagination.Last onClick={() => this.props.handlePageChange(this.props.totalPages)}/>
+                            <Pagination.Last disabled={this.props.current === this.props.totalPages} onClick={() => this.props.handlePageChange(this.props.totalPages)}/>
                         </Pagination>
                     </Col>
                 </Row>
