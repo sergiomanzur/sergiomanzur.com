@@ -43,7 +43,7 @@ const Category = ({match}) => {
 
     const homePosts = posts.filter((x,i)=> i < 6 ).map(
         x => <HomepageCard key={x.id} title={x.title}
-                           image={"http://sergiomanzur.com/site/assets/files/"+x.id+"/"+
+                           image={"http://dev.sergiomanzur.com/site/assets/files/"+x.id+"/"+
                            x.images[0].data} summary={x.summary} slug={x.slug} author={x.author} fecha={x.fecha}/>);
     //console.log(titles);
 
