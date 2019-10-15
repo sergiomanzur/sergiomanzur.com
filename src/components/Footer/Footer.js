@@ -32,9 +32,9 @@ const footer = (props) => {
                             <Col xs={12} sm={3}>
                                 <h4>Enlaces</h4>
                                 <br/>
-                                <li><a href="https://www.siteground.com/index.htm?afcode=c5fcf639e810adad47f8ec325f269508">El Mejor Hosting del Mundo</a></li>
-                                <li><a href="#">LINK</a></li>
-                                <li><a href="#">LINK</a></li>
+                                <li><a target="_blank" href="https://www.siteground.com/index.htm?afcode=c5fcf639e810adad47f8ec325f269508">El Mejor Hosting del Mundo</a></li>
+                                <li><a target="_blank" href="http://transportesleroy.com">Transportes Leroy Tampico</a></li>
+
                             </Col>
                             <Col xs={12} sm={3}>
                                 <h4>Contacto</h4>
