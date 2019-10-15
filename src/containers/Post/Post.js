@@ -94,7 +94,9 @@ class Post extends Component {
                         <meta charSet="utf-8"/>
                         <title>{title + " | El Blog de Sergio Manzur"}</title>
                         <meta name="description" content={summary}/>
-                        <link rel="canonical" href={"http://sergiomanzur.com/blog/" + this.state.slug}/>
+                        <meta property="og:image" content={exampleImage}/>
+                        <meta property="og:image:secure_url" content={exampleImage}/>
+                        <link rel="canonical" href={"http://dev.sergiomanzur.com/blog/" + this.state.slug}/>
                     </Helmet>
                     <br/>
                     <Row>
@@ -119,6 +121,7 @@ class Post extends Component {
 
                                     <FacebookShareCount
                                         url={shareUrl}
+                                        image={exampleImage}
                                         className="Demo__some-network__share-count">
                                         {count => count}
                                     </FacebookShareCount>
