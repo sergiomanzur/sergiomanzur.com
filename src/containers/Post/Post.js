@@ -231,7 +231,7 @@ class Post extends Component {
                         <Col sm={4} style={{padding: "30px"}}>
                             <div style={{textAlign: 'center'}}>
                                 <Image style={{width: 100}}
-                                       src="https://scontent.fmex4-1.fna.fbcdn.net/v/t1.0-9/22450165_10159513665515302_7682864324370379155_n.jpg?_nc_cat=107&_nc_oc=AQnr82w4pzFJaX8ELmrs7aUGxFr0vE_eyzkqzynEOtaiMVU9KsL9LERKP6hXZ2iYa_M&_nc_ht=scontent.fmex4-1.fna&oh=4ccb0f6d863d0d1b5c4ff6fcab03cc57&oe=5DDD40E6"
+                                       src={require('./sergiomanzurface.png')}
                                        roundedCircle/>
                             </div>
                             <br/>
