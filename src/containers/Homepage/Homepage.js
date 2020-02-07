@@ -35,6 +35,7 @@ class Homepage extends Component {
                 this.setState({posts:res.data.data});
                 this.setState({currentPage: res.data['current_page']});
                 this.setState({totalPages:res.data['total_pages']});
+                window.scrollTo(0,0);
             })
     }
 
