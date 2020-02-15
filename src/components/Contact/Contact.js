@@ -1,196 +1,235 @@
-import React, {useEffect,useState} from 'react';
-import classes from './Contact.module.css';
+import React, {useReducer} from 'react';
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Spinner from "react-bootstrap/Spinner";
 import axios from "axios";
 import Image from "react-bootstrap/Image";
 import Alert from "react-bootstrap/Alert";
-import ReactGA from "react-ga";
-
-class Contact extends React.Component {
 
 
-    formData = new FormData();
+function reducer(state,action) {
+    switch(action.type){
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: '',
-            email: '',
-            phone: '',
-            message: '',
-            formStatus : 1, //1: new form, 2: form error, 3: form sent correctly
-            validateEmail : false,
-            validateName : false,
-            validateMessage: false
-        };
-
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-     validateEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
-
-        if(name === 'name'){
-            if(value.length > 3) {
-                this.setState({validateName: true});
+        case 'nameChanged':
+            return {
+                ...state,
+                name: action.payload,
+                isNameValid: action.payload.length > 3,
+                isNameInvalid: action.payload.length <= 3
+            };
+        case 'emailChanged':{
+            const valid= /^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i.test(action.payload);
+            return {
+                ...state,
+                email: action.payload,
+                isEmailValid: valid,
+                isEmailInvalid: !valid
+            };
+        }
+        case 'phoneChanged':
+            return {
+                ...state,
+                phone: action.payload,
+                isPhoneValid: action.payload.length === 10,
+                isPhoneInvalid: action.payload.length !== 10
+            };
+        case 'messageChanged':
+            return {
+                ...state,
+                message: action.payload,
+                isMessageValid: action.payload.length > 3,
+                isMessageInvalid: action.payload.length <= 3
+            };
+        case 'reset':
+            return {
+                ...state,
+                name: '',
+                email: '',
+                phone: '',
+                message: '',
+                showForm: true,
+                isLoading: false,
+                isButtonActive: true
+            };
+        case 'sendingForm':
+            return {
+                ...state,
+                showForm: false,
+                isLoading: true,
+                isButtonActive: false
+            };
+        case 'gotFormError':
+            return {
+                ...state,
+                showForm: true,
+                isLoading: false,
+                isButtonActive: true,
+                theError: action.payload
+            };
+        case 'formSuccess':
+            return {
+                ...state,
+                showForm: false,
+                isLoading: false,
+                isButtonActive: false,
+                isFormSuccess: true
             }
-        }
-
-        if(name === 'email'){
-            if(this.validateEmail(value)) {
-                this.setState({validateEmail: true});
-            }
-        }
-
-        if(name === 'message'){
-            if(value.length > 3) {
-                this.setState({validateMessage: true});
-            }
-        }
-
-        this.setState({
-            [name]: value
-        });
-
     }
+}
 
 
-    handleSubmit(event) {
-        console.log(this.state.name + ' ' + this.state.email+ ' ' + this.state.phone + ' ' + this.state.message);
-        event.preventDefault();
+const Contact = () => {
 
-        if(this.state.validateName === true) {
-            this.formData.set('Nombre', this.state.name);
-        }
+    const [state, dispatch] = useReducer(reducer,{
+        name: '',
+        isNameValid: false,
+        isNameInvalid: false,
+        isEmailValid: false,
+        isEmailInvalid : false,
+        isPhoneValid: false,
+        isPhoneInvalid: false,
+        isMessageValid: false,
+        isMessageInvalid: false,
+        validateForm : false,
+        email: '',
+        phone: '',
+        message: '',
+        isValid: false,
+        showForm: true,
+        isLoading: false,
+        isButtonActive: true,
+        isFormSuccess: false,
+        theError: null
+    });
 
-        if(this.state.validateEmail === true) {
-            this.formData.set('Email', this.state.email);
-        }
+    function handleSubmit(e) {
+        e.preventDefault();
 
-        this.formData.set('Telefono', this.state.phone);
+        if(state.isNameValid && state.isEmailValid &&  state.isPhoneValid && state.isMessageValid){
+            const formData = new FormData();
+            formData.set('Nombre', state.name);
+            formData.set('Email', state.email);
+            formData.set('Telefono', state.phone);
+            formData.set('Mensaje', state.message);
 
-        if(this.state.validateMessage === true) {
-            this.formData.set('Mensaje', this.state.message);
-        }
 
-        console.log(this.formData);
-        console.log(this.state.validateName + this.state.validateEmail == true + this.state.validateMessage == true);
-
-        if(this.state.validateEmail == true & this.state.validateName == true && this.state.validateMessage == true) {
+            dispatch({type:'sendingForm'});
             axios({
                 method: 'post',
                 url: 'http://www.dev.sergiomanzur.com/api/contacto/',
-                data: this.formData,
+                data: formData,
                 config: {headers: {'Content-Type': 'multipart/form-data'}}
             })
                 .then(function (response) {
                     //handle success
                     console.log(response);
+                    dispatch({type:'formSuccess'});
                 })
                 .catch(function (response) {
-                    //handle error
-                    console.log(response);
+                    console.log(JSON.stringify(response.message));
+                    dispatch({type: 'gotFormError', payload:JSON.stringify(response.message)});
                 });
-            this.setState({formStatus: 3});
+
         } else {
-            this.setState({formStatus: 2});
+            dispatch({type:'gotFormError', payload:'Datos inválidos'});
         }
 
     }
 
 
-    render() {
+    function handleNameChange(event) {
+        dispatch({type:'nameChanged', payload: event.target.value});
+    }
 
-        ReactGA.initialize('UA-65003463-1');
-        ReactGA.pageview(window.location.pathname + window.location.search);
+    function handleEmailChange(event) {
+        dispatch({type:'emailChanged', payload: event.target.value});
+    }
 
-        const formStatus = this.state.formStatus;
+    function handlePhoneChange(event) {
+        dispatch({type:'phoneChanged', payload: event.target.value});
+    }
 
-        const nothing = (<Alert variant="danger"> You need to fill all required fields (*). <br/>
-        All fields need to have 3 or more characters. </Alert>);
+    function handleMessageChange(event) {
+        dispatch({type:'messageChanged', payload: event.target.value});
+    }
 
-        const successful = (<Col>
-            <h2>El correo ha sido enviado con éxito</h2>
-            <br/>
-            <p>Recibirás una respuesta en las próximas 24 horas.</p>
-        </Col>)
+    console.dir(state);
 
-        let formDisplay;
+    const loading = state.isLoading ?<div style={{textAlign:"center"}}> <Spinner animation="border" /> </div> : null;
 
 
-        const mainForm = (
-            <Row>
+    const {isNameValid, isNameInvalid, isEmailValid, isEmailInvalid, isPhoneValid, isPhoneInvalid, validateForm,
+        isMessageValid, isMessageInvalid, name, message, phone, email, isButtonActive} = state;
+
+    const theForm = (
+        <Row>
             <Col xs={12} md={12} lg={{span: 6, offset: 3}} >
-                {formStatus == 2 ? nothing : ''}
-           <div>
-            <Form onSubmit={this.handleSubmit}>
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Label>* Nombre Completo</Form.Label>
-                    <Form.Control type="text" placeholder="Introduce tu nombre completo" name="name" value={this.state.name} onChange={this.handleInputChange} required />
-                </Form.Group>
+                <div>
+                    <Form validated={validateForm} onSubmit={handleSubmit}>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Label>* Nombre Completo</Form.Label>
+                            <Form.Control type="text" placeholder="Introduce tu nombre completo" name="name" isValid={isNameValid} isInvalid={isNameInvalid} value={name} onChange={handleNameChange} required />
+                            <Form.Control.Feedback type="invalid">
+                                Your name should be more than three characters.
+                            </Form.Control.Feedback>
+                        </Form.Group>
 
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Label>* Email</Form.Label>
-                    <Form.Control type="email" placeholder="email@dominio.com" name="email" value={this.state.email} onChange={this.handleInputChange} required />
-                    <Form.Text className="text-muted">
-                        Tu correo electrónico jamás será compartido.
-                    </Form.Text>
-                </Form.Group>
+                        <Form.Group controlId="formBasicEmail">
+                            <Form.Label>* Email</Form.Label>
+                            <Form.Control type="email" placeholder="email@dominio.com" name="email" isValid={isEmailValid} isInvalid={isEmailInvalid} value={email} onChange={handleEmailChange} required />
+                            <Form.Text className="text-muted">
+                                Tu correo electrónico jamás será compartido.
+                            </Form.Text>
+                        </Form.Group>
 
-                <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Teléfono</Form.Label>
-                    <Form.Control type="text" placeholder="(833)2171717" name="phone"  value={this.state.phone} onChange={this.handleInputChange} />
-                </Form.Group>
+                        <Form.Group controlId="formBasicPhone">
+                            <Form.Label>* Teléfono (10 dígitos)</Form.Label>
+                            <Form.Control type="text" placeholder="(833)2171717" name="phone"  isValid={isPhoneValid} isInvalid={isPhoneInvalid} value={phone} onChange={handlePhoneChange} required />
+                        </Form.Group>
 
-                <Form.Group controlId="exampleForm.ControlTextarea1">
-                    <Form.Label>* Mensaje</Form.Label>
-                    <Form.Control as="textarea" rows="3" name="message" value={this.state.message} onChange={this.handleInputChange} required/>
-                </Form.Group>
+                        <Form.Group controlId="formControlTextarea1">
+                            <Form.Label>* Mensaje</Form.Label>
+                            <Form.Control as="textarea" rows="3" name="message" value={message} isValid={isMessageValid} isInvalid={isMessageInvalid} onChange={handleMessageChange} required/>
+                        </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    Enviar
-                </Button>
-            </Form>
-           </div>
+                        <Button disabled={!isButtonActive} variant="primary" type="submit">
+                            Enviar
+                        </Button>
+                    </Form>
+                </div>
             </Col>
-            </Row>);
+        </Row>
+    );
 
-        if(formStatus == 1) {
-            formDisplay = mainForm;
-        } else if(formStatus == 2) {
-            formDisplay =  mainForm;
-        } else {
-            formDisplay = successful;
-        }
+    const successful = (<Col>
+        <h2>El correo ha sido enviado con éxito</h2>
+        <br/>
+        <p>Recibirás una respuesta en las próximas 24 horas.</p>
+    </Col>);
+
+    const errorAlert = (
+        <Alert variant='danger' >
+            {state.theError}
+        </Alert>
+    );
 
 
-        return (
-            <Row>
-                <Container>
-                    <h1>Contacto</h1>
-                    <Image style={{marginBottom: "10px"}} src="http://www.dev.sergiomanzur.com/site/assets/files/1019/contacto_1.jpg?nc=1568222763" fluid/>
+    return(
+        <div>
+            <Container>
+                <h1>Contacto</h1>
+                <Image style={{marginBottom: "10px"}} src="http://www.dev.sergiomanzur.com/site/assets/files/1019/contacto_1.jpg?nc=1568222763" fluid/>
 
-                    {formDisplay}
+                {loading}
+                {state.theError != null ? errorAlert : null}
+                {state.showForm && !state.isFormSuccess ? theForm : null}
+                {state.isFormSuccess ? successful : null}
 
-                </Container>
-            </Row>
-        )
-
-    }
-
+            </Container>
+        </div>
+    );
 }
-
-
 export default Contact;
